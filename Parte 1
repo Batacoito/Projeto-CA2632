@@ -1,0 +1,363 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define limitecategoria 10
+
+struct teste{
+  float v;
+  char desc[50];
+  char data[12];
+  char cat[100];
+  char valor[100];
+};
+
+struct categ{
+  char ind[50];
+  float valor;
+  float jan;
+  float fev;
+  float mar;
+  float abr;
+  float mai;
+  float jun;
+  float jul;
+  float ago;
+  float set;
+  float out;
+  float nov;
+  float dez;
+};
+
+void categorias(){
+
+  char leitura[100];
+
+  FILE *arq2 = fopen("cat.txt","a+");
+
+  if (fgets(leitura, 100, arq2) == NULL){
+    fprintf(arq2, "Nova categoria\n");
+    fprintf(arq2, "Indefinido\n");
+    fprintf(arq2, "Casa\n");
+    fprintf(arq2, "Estudos\n");
+    fprintf(arq2, "Transporte\n");
+    fprintf(arq2, "Alimentação\n");
+  }
+
+  fclose(arq2);
+}
+
+void categoria(char *s){
+
+  char leitura[100];
+  char leitura2[100];
+  int n = 0, i = 0, k = 0, i2 = 0, k2 = 0;
+
+  FILE *arq2 = fopen("cat.txt","a+");
+
+  while(fgets(leitura, 100, arq2) != NULL){
+    printf("%d - ", n);
+    printf("%s", leitura);
+    n++;
+  }
+
+  rewind(arq2);
+  
+  printf("\n");
+  scanf("%d", &k);
+
+  if (k > 1){
+    for (i = 0; i <= k; i++){
+      fgets(leitura, 100, arq2);
+      if (i == k){
+        strcpy(s, leitura);
+      }
+    }
+  }
+  else if (k == 0){
+    printf("Digite a nova categoria: ");
+    scanf("%s", leitura);
+    fprintf(arq2, "%s", leitura);
+    printf("Você deseja cadastrar seu gasto com a nova categoria? ( 1 = Sim, 2 = Não )");
+    scanf("%d", &k2);
+    if (k2 == 1){
+      for (i2 = 0; leitura[i2] != 0; i2++){
+        s[i2] = leitura[i2];
+      }
+    }
+  }
+  fclose(arq2);
+}
+
+void menu(a){
+
+  if (a == 14){
+    printf("Bem vindo ao seu gerenciador de gastos.\n");
+    printf("0 - Sair\n");
+    printf("1 - Cadastrar novo gasto\n");
+    printf("2 - Acessar relatórios\n");
+  }
+
+  else{
+    printf("=============================\n");
+    printf("0 - Sair\n");
+    printf("1 - Cadastrar novo gasto\n");
+    printf("2 - Acessar relatórios\n");
+  }
+}
+
+void cadastro(){
+
+  int n = 0, k = 0;
+
+  FILE *arq = fopen("a.txt","a+");
+
+  struct teste p;
+
+  printf("Digite a categoria do gasto:\n");
+  categoria(p.cat);
+
+  printf("Digite o valor do gasto: ");
+  scanf("%f", &p.v);
+
+  printf("Digite a descrição do gasto: ");
+  scanf("%s", p.desc);
+
+  printf("Digite a data do gasto (aa/aa/aaaa): ");
+  scanf("%s", p.data);
+
+  fprintf(arq, "%s", p.cat);
+  fprintf(arq, "%s\n", p.desc);
+  fprintf(arq, "%s\n", p.data);
+  fprintf(arq, "%.2f\n", p.v);
+
+  fclose(arq);
+}
+
+void relatorioAnual(){
+  FILE *relatorio = fopen("relatorio.html","w");
+  FILE *descricao = fopen("a.txt","r");
+
+  struct teste abacaxi;
+  char valor[100];
+  int i = 0; 
+  float aux = 0, aux1 = 0, ano = 0;
+  char auxa[5];
+
+  fprintf(relatorio, "<!DOCTYPE html>\n");
+  fprintf(relatorio, "<meta charset = 'UTF-8'>\n");
+  fprintf(relatorio, "<html>\n<body>\n");
+
+  printf("Digite o ano atual: ");
+  scanf("%f", &ano);
+
+  for (i = 0; fscanf(descricao, "%s", abacaxi.cat) != EOF; i++){
+    fscanf(descricao, "%s", abacaxi.desc);
+    fscanf(descricao, "%s", abacaxi.data);
+    fscanf(descricao, "%s", abacaxi.valor);
+
+    if (strlen(abacaxi.data) == 10){
+
+      auxa[0] = abacaxi.data[6];
+      auxa[1] = abacaxi.data[7];
+      auxa[2] = abacaxi.data[8];
+      auxa[3] = abacaxi.data[9];
+
+      aux1 = atof(auxa);
+
+      if (ano == aux1){
+        abacaxi.v = atof(abacaxi.valor);
+        aux += abacaxi.v;
+      }
+    }
+    else{
+      printf("Data de cadastro inválida !");
+    }
+  }
+
+  fprintf(relatorio, "<style>\n");
+  fprintf(relatorio, "body{text-align:center;\nfont-family:Arial Black;\ntop:50%;\nfont-size:30px}\n");
+  fprintf(relatorio, "</style>\n");
+  fprintf(relatorio, "<br>\n");
+  fprintf(relatorio, "<br>\n");
+  fprintf(relatorio, "<br>\n");
+  fprintf(relatorio, "<br>\n");
+  fprintf(relatorio, "<br>\n");
+  fprintf(relatorio, "<br>\n");
+  fprintf(relatorio, "Total gasto no ano de %.0f: <br>R$ %.2f", ano, aux);
+  fprintf(relatorio, "\n</body>\n</html>");
+
+  fclose(relatorio);
+  fclose(descricao);
+}
+
+void relatorioMensal(){
+  FILE *relatorio = fopen("relatorio.html","w");
+  FILE *descricao = fopen("a.txt","r");
+
+  struct teste abacaxi;
+  char valor[100];
+  int i = 0, aux1 = 0; 
+  float aux = 0;
+  char auxa[5], auxm[3];
+  int ano = 0;
+  float jan = 0, fev = 0, mar = 0, abr = 0, maio = 0, jun = 0, jul = 0, ago = 0, set = 0, out = 0, nov = 0, dez = 0;
+
+  fprintf(relatorio, "<!DOCTYPE html>\n");
+  fprintf(relatorio, "<meta charset = 'UTF-8'>\n");
+  fprintf(relatorio, "<html><body>\n");
+
+  printf("Digite o ano desejado: ");
+  scanf("%d", &ano);
+
+  for (i = 0; fscanf(descricao, "%s", abacaxi.cat) != EOF; i++){
+    fscanf(descricao, "%s", abacaxi.desc);
+    fscanf(descricao, "%s", abacaxi.data);
+    fscanf(descricao, "%s", abacaxi.valor);
+
+    if (strlen(abacaxi.data) == 10){
+
+      auxa[0] = abacaxi.data[6];
+      auxa[1] = abacaxi.data[7];
+      auxa[2] = abacaxi.data[8];
+      auxa[3] = abacaxi.data[9];
+
+      aux1 = atof(auxa);
+
+      if (aux1 == ano){
+        auxm[0] = abacaxi.data[3];
+        auxm[1] = abacaxi.data[4];
+
+        aux = atof(auxm);
+
+        if (aux == 1){
+          abacaxi.v = atof(abacaxi.valor);
+          jan += abacaxi.v;
+        }
+
+        if (aux == 2){
+          abacaxi.v = atof(abacaxi.valor);
+          fev += abacaxi.v;
+        }
+
+        if (aux == 3){
+          abacaxi.v = atof(abacaxi.valor);
+          mar += abacaxi.v;
+        }
+
+        if (aux == 4){
+          abacaxi.v = atof(abacaxi.valor);
+          abr += abacaxi.v;
+        }
+
+        if (aux == 5){
+          abacaxi.v = atof(abacaxi.valor);
+          maio += abacaxi.v;
+        }
+
+        if (aux == 6){
+          abacaxi.v = atof(abacaxi.valor);
+          jun += abacaxi.v;
+        }
+
+        if (aux == 7){
+          abacaxi.v = atof(abacaxi.valor);
+          jul += abacaxi.v;
+        }
+
+        if (aux == 8){
+          abacaxi.v = atof(abacaxi.valor);
+          ago += abacaxi.v;
+        }
+
+        if (aux == 9){
+          abacaxi.v = atof(abacaxi.valor);
+          set += abacaxi.v;
+        }
+
+        if (aux == 10){
+          abacaxi.v = atof(abacaxi.valor);
+          out += abacaxi.v;
+        }
+
+        if (aux == 11){
+          abacaxi.v = atof(abacaxi.valor);
+          nov += abacaxi.v;
+        }
+
+        if (aux == 12){
+          abacaxi.v = atof(abacaxi.valor);
+          dez += abacaxi.v;
+        }
+      }
+    }
+    else{
+      printf("Data de cadastro inválida !\n");
+    }
+  }
+
+  fprintf(relatorio, "<canvas id='jan' width='50' height='%.0f'></canvas>\n", jan*10);
+  fprintf(relatorio, "<canvas id='fev' width='50' height='%.0f'></canvas>\n", fev*10);
+  fprintf(relatorio, "<canvas id='mar' width='50' height='%.0f'></canvas>\n", mar*10);
+  fprintf(relatorio, "<canvas id='abr' width='50' height='%.0f'></canvas>\n", abr*10);
+  fprintf(relatorio, "<canvas id='mai' width='50' height='%.0f'></canvas>\n", maio*10);
+  fprintf(relatorio, "<canvas id='jun' width='50' height='%.0f'></canvas>\n", jun*10);
+  fprintf(relatorio, "<canvas id='jul' width='50' height='%.0f'></canvas>\n", jul*10);
+  fprintf(relatorio, "<canvas id='ago' width='50' height='%.0f'></canvas>\n", ago*10);
+  fprintf(relatorio, "<canvas id='set' width='50' height='%.0f'></canvas>\n", set*10);
+  fprintf(relatorio, "<canvas id='out' width='50' height='%.0f'></canvas>\n", out*10);
+  fprintf(relatorio, "<canvas id='nov' width='50' height='%.0f'></canvas>\n", nov*10);
+  fprintf(relatorio, "<canvas id='dez' width='50' height='%.0f'></canvas>\n", dez*10);
+
+  fprintf(relatorio, "<style> \n");
+  fprintf(relatorio, "#jan{\nbackground-color: black;\nposition: absolute;\n left: 10%; top: 15%;} \n");
+  fprintf(relatorio, "#fev{\nbackground-color: black;\nposition: absolute;\n left: 15%; top: 15%;} \n");
+  fprintf(relatorio, "#mar{\nbackground-color: black;\nposition: absolute;\n left: 20%; top: 15%;} \n");
+  fprintf(relatorio, "#abr{\nbackground-color: black;\nposition: absolute;\n left: 25%; top: 15%;} \n");
+  fprintf(relatorio, "#mai{\nbackground-color: black;\nposition: absolute;\n left: 35%; top: 15%;} \n");
+  fprintf(relatorio, "#jun{\nbackground-color: black;\nposition: absolute;\n left: 40%; top: 15%;} \n");
+  fprintf(relatorio, "#jul{\nbackground-color: black;\nposition: absolute;\n left: 45%; top: 15%;} \n");
+  fprintf(relatorio, "#ago{\nbackground-color: black;\nposition: absolute;\n left: 50%; top: 15%;} \n");
+  fprintf(relatorio, "#set{\nbackground-color: black;\nposition: absolute;\n left: 55%; top: 15%;} \n");
+  fprintf(relatorio, "#out{\nbackground-color: black;\nposition: absolute;\n left: 60%; top: 15%;} \n");
+  fprintf(relatorio, "#nov{\nbackground-color: black;\nposition: absolute;\n left: 65%; top: 15%;} \n");
+  fprintf(relatorio, "#dez{\nbackground-color: black;\nposition: absolute;\n left: 70%; top: 15%;} \n");
+
+  fprintf(relatorio, "#tit{\nposition: absolute;\nleft: 50%;\ntop: .2%;} \n");
+  fprintf(relatorio, "#mes1{\nposition: absolute;\n left: 10%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes2{\nposition: absolute;\n left: 15%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes3{\nposition: absolute;\n left: 20%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes4{\nposition: absolute;\n left: 25%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes5{\nposition: absolute;\n left: 30%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes6{\nposition: absolute;\n left: 35%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes7{\nposition: absolute;\n left: 40%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes8{\nposition: absolute;\n left: 45%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes9{\nposition: absolute;\n left: 50%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes10{\nposition: absolute;\n left: 55%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes11{\nposition: absolute;\n left: 60%;\n top: 10%;} \n");
+  fprintf(relatorio, "#mes12{\nposition: absolute;\n left: 65%;\n top: 10%;} \n");
+  fprintf(relatorio, "body{background-color: skyblue} \n");
+  fprintf(relatorio, "</style>\n");
+
+  fprintf(relatorio, "<h1 id='tit'>");
+  fprintf(relatorio, "Gastos no ano de %d", ano);
+  fprintf(relatorio, "</h1>\n\n");
+
+  fprintf(relatorio, "<p>");
+  fprintf(relatorio, "<p id = 'mes1'>Janeiro</p>\n");
+  fprintf(relatorio, "<p id = 'mes2'>Fevereiro</p>\n");
+  fprintf(relatorio, "<p id = 'mes3'>Março</p>\n");
+  fprintf(relatorio, "<p id = 'mes4'>Abril</p>\n");
+  fprintf(relatorio, "<p id = 'mes5'>Maio</p>\n");
+  fprintf(relatorio, "<p id = 'mes6'>Junho</p>\n");
+  fprintf(relatorio, "<p id = 'mes7'>Julho</p>\n");
+  fprintf(relatorio, "<p id = 'mes8'>Agosto</p>\n");
+  fprintf(relatorio, "<p id = 'mes9'>Setembro</p>\n");
+  fprintf(relatorio, "<p id = 'mes10'>Outubro</p>\n");
+  fprintf(relatorio, "<p id = 'mes11'>Novembro</p>\n");
+  fprintf(relatorio, "<p id = 'mes12'>Dezembro</p>\n");
+  fprintf(relatorio, "</p>");
+  fprintf(relatorio, "</body></html>");
+  
+  fclose(relatorio);
+  fclose(descricao);
+}
